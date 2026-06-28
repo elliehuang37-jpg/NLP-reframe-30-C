@@ -1,0 +1,580 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#6fa47e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="30天換框練習">
+  <title>30天換框練習｜Sleight of Mouth</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./icons/icon-192.png" type="image/png">
+  <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+  <style>
+    :root {
+      --ink: #21372c;
+      --muted: #60786b;
+      --mint: #77bf91;
+      --mint-dark: #34734f;
+      --cream: #fffdf4;
+      --soft: #f2fbf1;
+      --line: rgba(83, 122, 93, .18);
+      --coral: #ea927d;
+      --gold: #efd765;
+      --shadow: 0 18px 42px rgba(52, 115, 79, .16);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Noto Sans TC", "Microsoft JhengHei", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: linear-gradient(180deg, #f7fbf4, #edf8ee 48%, #fffdf4);
+      color: var(--ink);
+    }
+    button, input, textarea, select { font: inherit; }
+    button { cursor: pointer; }
+    .app {
+      width: min(100%, 520px);
+      min-height: 100vh;
+      margin: 0 auto;
+      overflow: hidden;
+      background: rgba(255, 253, 244, .86);
+      box-shadow: 0 0 70px rgba(54, 103, 70, .14);
+    }
+    .hero {
+      position: relative;
+      min-height: 280px;
+      padding: max(18px, env(safe-area-inset-top)) 18px 36px;
+      color: #fff;
+      background:
+        linear-gradient(135deg, rgba(42, 92, 63, .92), rgba(95, 153, 116, .78) 46%, rgba(187, 117, 100, .58)),
+        url("./assets/brain-header.png") center / cover;
+      border-bottom-left-radius: 52% 13%;
+      border-bottom-right-radius: 52% 15%;
+    }
+    .topbar, .brand, .stats, .progress-head, .actions, .day-switcher {
+      display: flex;
+      align-items: center;
+    }
+    .topbar { justify-content: space-between; gap: 12px; }
+    .brand { gap: 10px; min-width: 0; }
+    .brand-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 15px;
+      display: grid;
+      place-items: center;
+      background: rgba(255,255,255,.88);
+      box-shadow: 0 10px 24px rgba(39,72,47,.18);
+      flex: 0 0 auto;
+    }
+    .brand-icon svg { width: 29px; height: 29px; }
+    .brand-icon img {
+      width: 30px;
+      height: 30px;
+      border-radius: 10px;
+      object-fit: cover;
+      display: block;
+    }
+    .brand-title { margin: 0; font-size: 15px; font-weight: 900; }
+    .brand-subtitle { margin: 2px 0 0; font-size: 11px; opacity: .94; }
+    .install-btn {
+      border: 1px solid rgba(255,255,255,.45);
+      background: rgba(255,255,255,.2);
+      color: #fff;
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 13px;
+      font-weight: 800;
+    }
+    .install-btn[hidden] { display: none; }
+    h1 {
+      margin: 34px 0 10px;
+      font-size: clamp(32px, 8.5vw, 44px);
+      line-height: 1.08;
+      letter-spacing: 0;
+      text-shadow: 0 8px 28px rgba(24,55,37,.28);
+    }
+    .hero-copy {
+      max-width: 390px;
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.75;
+      text-shadow: 0 2px 18px rgba(24,55,37,.28);
+    }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 22px;
+    }
+    .stat {
+      min-width: 0;
+      border: 1px solid rgba(255,255,255,.36);
+      border-radius: 18px;
+      padding: 10px;
+      background: rgba(255,255,255,.2);
+      backdrop-filter: blur(12px);
+    }
+    .stat strong { display: block; font-size: 21px; line-height: 1; }
+    .stat span { display: block; margin-top: 6px; font-size: 11px; opacity: .9; }
+    main { padding: 0 16px 92px; }
+    .progress {
+      transform: translateY(-20px);
+      margin-bottom: -6px;
+      padding: 14px;
+      border-radius: 20px;
+      background: rgba(255,255,255,.92);
+      border: 1px solid rgba(255,255,255,.85);
+      box-shadow: var(--shadow);
+    }
+    .progress-head { justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+    .progress-head h2 { margin: 0; font-size: 16px; }
+    .progress-head span { color: var(--mint-dark); font-size: 13px; font-weight: 900; }
+    .bar { height: 10px; border-radius: 999px; background: #e8f2e6; overflow: hidden; }
+    .fill { height: 100%; width: 0; border-radius: inherit; background: linear-gradient(90deg, var(--mint), var(--gold), var(--coral)); }
+    .tabs {
+      position: sticky;
+      top: 0;
+      z-index: 5;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 6px;
+      padding: 10px 0;
+      background: linear-gradient(180deg, rgba(248,251,244,.98), rgba(248,251,244,.86));
+      backdrop-filter: blur(14px);
+    }
+    .tab {
+      min-width: 0;
+      min-height: 40px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255,255,255,.78);
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 900;
+    }
+    .tab.active { background: var(--ink); color: #fff; border-color: var(--ink); }
+    .view { display: none; }
+    .view.active { display: block; }
+    .card {
+      margin: 12px 0;
+      padding: 16px;
+      border-radius: 20px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.92);
+      box-shadow: 0 12px 30px rgba(66,105,79,.1);
+    }
+    .label {
+      display: inline-flex;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: #ecf7eb;
+      color: var(--mint-dark);
+      font-size: 12px;
+      font-weight: 900;
+    }
+    .day-switcher {
+      display: grid;
+      grid-template-columns: 44px 1fr 44px;
+      gap: 9px;
+      margin: 10px 0 12px;
+    }
+    .day-switcher > * { min-width: 0; }
+    .btn, .day-select {
+      min-height: 44px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: rgba(255,255,255,.9);
+      color: var(--ink);
+      font-weight: 900;
+    }
+    .btn {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      border: 0;
+      background: #edf6eb;
+    }
+    .btn.primary { color: #fff; background: linear-gradient(135deg, var(--mint-dark), var(--mint)); }
+    .btn.coral { color: #fff; background: linear-gradient(135deg, #cf705c, var(--coral)); }
+    .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; margin-top: 14px; }
+    .full { grid-column: 1 / -1; }
+    .day-title { margin: 12px 0 8px; font-size: 22px; line-height: 1.25; }
+    .lead, .note, .journal-empty { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.7; }
+    .belief, .phrase {
+      margin-top: 12px;
+      padding: 13px;
+      border-radius: 16px;
+      background: #fff7df;
+      border: 1px solid rgba(239,215,101,.45);
+      color: #654e13;
+      font-size: 14px;
+      font-weight: 800;
+      line-height: 1.6;
+    }
+    .steps, .timeline, .role-grid, .check-grid, .scenario-box, .mode-grid, .journal-list { display: grid; gap: 9px; margin-top: 12px; }
+    .step, .timeline div, .check-grid label, .mode-card, .journal-item, .role-card {
+      padding: 11px 12px;
+      border-radius: 16px;
+      border: 1px solid rgba(119,191,145,.16);
+      background: #f7fbf4;
+      font-size: 13px;
+      line-height: 1.58;
+    }
+    .step { display: grid; grid-template-columns: 28px 1fr; gap: 10px; align-items: start; }
+    .step-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--mint), var(--gold));
+    }
+    .step p, .journal-item p, .role-card p { margin: 0; color: var(--muted); }
+    .field { display: grid; gap: 8px; margin-top: 13px; }
+    label { font-size: 13px; font-weight: 900; color: var(--ink); }
+    input[type="text"], textarea, select {
+      width: 100%;
+      min-width: 0;
+      border: 1px solid rgba(83,122,93,.22);
+      border-radius: 16px;
+      background: rgba(255,255,255,.94);
+      color: var(--ink);
+      padding: 12px 13px;
+      outline: none;
+    }
+    textarea { min-height: 96px; resize: vertical; line-height: 1.55; }
+    input:focus, textarea:focus, select:focus { border-color: var(--mint); box-shadow: 0 0 0 4px rgba(119,191,145,.16); }
+    .sample { display: none; }
+    .sample.show { display: block; }
+    .mode-grid { grid-template-columns: repeat(2, 1fr); }
+    .mode-card { min-height: 104px; text-align: left; color: var(--ink); }
+    .mode-card.active { background: #fff8f4; border-color: rgba(234,146,125,.48); }
+    .mode-card strong, .role-card strong, .journal-item strong { display: block; margin-bottom: 6px; }
+    .role-a { border-left: 5px solid var(--coral); }
+    .role-b { border-left: 5px solid #6eb3d5; }
+    .role-c { border-left: 5px solid var(--mint); }
+    .timeline div { display: grid; grid-template-columns: 72px 1fr; }
+    .check-grid input { width: 18px; height: 18px; accent-color: var(--mint-dark); }
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 18px;
+      transform: translateX(-50%) translateY(18px);
+      width: min(calc(100% - 32px), 440px);
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: rgba(33,55,44,.94);
+      color: #fff;
+      text-align: center;
+      font-size: 13px;
+      opacity: 0;
+      pointer-events: none;
+      transition: .2s ease;
+      z-index: 10;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    @media (min-width: 760px) {
+      body { padding: 28px 0; }
+      .app { border-radius: 34px; min-height: calc(100vh - 56px); }
+      .tabs { top: 28px; }
+    }
+    @media (max-width: 370px) {
+      main { padding-left: 12px; padding-right: 12px; }
+      .tab { font-size: 11px; }
+      .mode-grid, .actions { grid-template-columns: 1fr; }
+      .full { grid-column: auto; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="hero">
+      <div class="topbar">
+        <div class="brand">
+          <div class="brand-icon" aria-hidden="true">
+            <img src="./icons/icon-192.png" alt="">
+          </div>
+          <div>
+            <p class="brand-title">30天換框練習</p>
+            <p class="brand-subtitle">Sleight of Mouth Reframing</p>
+          </div>
+        </div>
+        <button id="installBtn" class="install-btn" hidden type="button">＋ 安裝</button>
+      </div>
+      <h1>把卡住的語言，轉成有選擇的力量</h1>
+      <p class="hero-copy">每天 8 分鐘，結合 14 種語言魔術模式與課堂角色演練，從先跟後導、正面動機到下一步行動，練出真正能化解衝突的換框能力。</p>
+      <div class="stats">
+        <div class="stat"><strong>30</strong><span>天每日練習</span></div>
+        <div class="stat"><strong>14</strong><span>換框模式</span></div>
+        <div class="stat"><strong id="doneCount">0</strong><span>已完成</span></div>
+      </div>
+    </header>
+    <main>
+      <section class="progress">
+        <div class="progress-head"><h2>今日進度</h2><span id="progressText">0 / 30</span></div>
+        <div class="bar"><div id="progressFill" class="fill"></div></div>
+      </section>
+      <nav class="tabs" aria-label="主功能">
+        <button class="tab active" data-view="practice" type="button">每日</button>
+        <button class="tab" data-view="foundation" type="button">結構</button>
+        <button class="tab" data-view="modes" type="button">14模式</button>
+        <button class="tab" data-view="workshop" type="button">演練</button>
+        <button class="tab" data-view="journal" type="button">紀錄</button>
+      </nav>
+      <section id="practice" class="view active">
+        <div class="day-switcher">
+          <button id="prevDay" class="btn" type="button" aria-label="前一天">‹</button>
+          <select id="daySelect" class="day-select" aria-label="選擇天數"></select>
+          <button id="nextDay" class="btn" type="button" aria-label="後一天">›</button>
+        </div>
+        <article class="card">
+          <span id="dayLabel" class="label"></span>
+          <h2 id="dayTitle" class="day-title"></h2>
+          <p id="dayIntro" class="lead"></p>
+          <div id="belief" class="belief"></div>
+          <div id="beliefType" class="phrase"></div>
+          <div id="patternPath" class="phrase"></div>
+          <div id="steps" class="steps"></div>
+        </article>
+        <article class="card">
+          <span class="label">今日輸出</span>
+          <div class="field"><label for="userBelief">我今天要練習換框的一句話</label><input id="userBelief" type="text" placeholder="例如：我不敢開口邀約，因為被拒絕很丟臉。"></div>
+          <div class="field"><label for="userReframe">我的換框回應</label><textarea id="userReframe" placeholder="先承認痛苦，再找出正面動機，最後導向下一步。"></textarea></div>
+          <div class="field"><label for="userAction">下一步行動</label><textarea id="userAction" placeholder="例如：今天找一位學員，練習用『同時』取代『但是』。"></textarea></div>
+          <div class="actions">
+            <button id="sampleBtn" class="btn" type="button">參考回應</button>
+            <button id="saveBtn" class="btn primary" type="button">儲存</button>
+            <button id="completeBtn" class="btn coral full" type="button">標記今日完成</button>
+          </div>
+          <div id="sample" class="sample phrase"></div>
+        </article>
+      </section>
+      <section id="foundation" class="view">
+        <article class="card">
+          <span class="label">Belief Structure</span>
+          <h2 class="day-title">先拆信念，再換框</h2>
+          <p class="lead">《Sleight of Mouth》的核心不是背話術，而是看見限制性信念如何把 A 與 B 綁在一起。當 A→B 的鏈條被看見，14 種語言魔術才有真正的施力點。</p>
+        </article>
+        <article class="card">
+          <span class="label">Cause-Effect</span>
+          <h2 class="day-title">因果論：因為 A，所以 B</h2>
+          <p class="lead">這種框架把某個條件直接推成負面結果，例如「因為我沒有名校學歷，所以我不會成功」。練習重點是鬆動「必然導致」這條因果鏈。</p>
+          <div class="steps">
+            <div class="step"><span class="step-num">1</span><p>找出 A：對方認為造成問題的原因、條件或事件。</p></div>
+            <div class="step"><span class="step-num">2</span><p>找出 B：對方認為必然發生的負面結果。</p></div>
+            <div class="step"><span class="step-num">3</span><p>用反例、框架大小、後果或另一個結果，讓「必然」變成「可能」。</p></div>
+          </div>
+        </article>
+        <article class="card">
+          <span class="label">Complex Equivalence</span>
+          <h2 class="day-title">等同論：A 發生了，就等於 B</h2>
+          <p class="lead">這種框架把事件直接等同於身份、意義或判斷，例如「主管沒打招呼，等於他不重視我」。練習重點是拆開「事件」與「意義」。</p>
+          <div class="steps">
+            <div class="step"><span class="step-num">1</span><p>找出 A：可觀察的事實或行為。</p></div>
+            <div class="step"><span class="step-num">2</span><p>找出 B：對方賦予它的意義、標籤或身份結論。</p></div>
+            <div class="step"><span class="step-num">3</span><p>用重新定義、現實檢驗、世界模型或後設框架，創造其他可能意義。</p></div>
+          </div>
+        </article>
+        <article class="card">
+          <span class="label">Practice Formula</span>
+          <h2 class="day-title">每日換框公式</h2>
+          <div class="steps">
+            <div class="step"><span class="step-num">1</span><p>聽出舊框架：這句話是因果論，還是等同論？</p></div>
+            <div class="step"><span class="step-num">2</span><p>承認情緒：先跟後導，讓對方感覺你理解他的痛苦。</p></div>
+            <div class="step"><span class="step-num">3</span><p>選擇槓桿：從 14 種模式中挑一個最能拆開 A→B 的角度。</p></div>
+            <div class="step"><span class="step-num">4</span><p>導向行動：把新框架落到下一個可做的小步驟。</p></div>
+          </div>
+        </article>
+      </section>
+      <section id="modes" class="view">
+        <article class="card"><span class="label">Sleight of Mouth</span><h2 class="day-title">14 種語言魔術模式</h2><p class="lead">核心不是說服對方，而是讓對方看見原本被忽略的意義、標準、例外與選擇。</p></article>
+        <div id="modeGrid" class="mode-grid"></div>
+        <article id="modeDetail" class="card"></article>
+      </section>
+      <section id="workshop" class="view">
+        <article class="card"><span class="label">50分鐘流程</span><div class="timeline"><div><strong>00-05</strong><span>規則說明、三人分組、抽角色</span></div><div><strong>05-25</strong><span>三輪角色扮演，每輪 6 分鐘</span></div><div><strong>25-40</strong><span>小組統整，萃取換框金句</span></div><div><strong>40-50</strong><span>大組示範，講師點評核心心法</span></div></div></article>
+        <article class="card"><span class="label">角色功能卡</span><div id="roleCards" class="role-grid"></div></article>
+        <article class="card"><span class="label">衝突情境庫</span><div class="field"><label for="scenarioSelect">選擇演練情境</label><select id="scenarioSelect" class="day-select"></select></div><div id="scenarioDetail" class="scenario-box"></div></article>
+        <article class="card"><span class="label">講師點評雷達</span><div class="check-grid"><label><input type="checkbox"> 先跟後導，不急著講道理</label><label><input type="checkbox"> 承認痛苦，不用雞湯蓋過痛苦</label><label><input type="checkbox"> 找出正面動機或隱藏資源</label><label><input type="checkbox"> 把「但是」換成「同時」</label><label><input type="checkbox"> 使用「正因為...所以...」換檔</label><label><input type="checkbox"> 最後導向具體下一步</label></div></article>
+      </section>
+      <section id="journal" class="view">
+        <article class="card"><span class="label">我的案例庫</span><p class="lead">回看自己的語言變化，會比只看概念更快累積穩定能力。</p><div class="actions"><button id="copyJournalBtn" class="btn primary" type="button">複製紀錄</button><button id="resetBtn" class="btn" type="button">清除</button></div></article>
+        <div id="journalList" class="journal-list"></div>
+      </section>
+    </main>
+  </div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script>
+    const modes = [
+      ["intent","意圖","Intention","把焦點從表面行為轉向背後正向意圖。","這句話想保護什麼？","我聽見你很在意這個價值。同時，如果保留這份在意，我們能不能換一種更支持你的做法？"],
+      ["redefine","重新定義","Redefine","替關鍵字換一個更有彈性的描述。","這真的是失敗，還是回饋？","也許這不是失敗，而是正在顯示下一步需要補強的訊號。"],
+      ["consequence","後果","Consequence","檢視持續相信這句話會帶來什麼結果。","如果繼續相信，一年後會如何？","如果繼續把它解讀成限制，它會讓你少做哪些重要行動？"],
+      ["chunk-down","向下拆解","Chunk Down","把籠統抱怨拆成可觀察、可處理的小單位。","具體是哪一次、哪一個環節？","先不用處理全部，只看下一個最小步驟。"],
+      ["chunk-up","向上歸納","Chunk Up","拉高層次，回到更大的目的與價值。","這件事服務哪個更大的目標？","放回你的大目標，它其實在訓練哪一種能力？"],
+      ["analogy","類比","Analogy","用熟悉故事或隱喻創造新的理解路徑。","這像哪一種訓練或旅程？","這像肌力訓練，痠痛不代表不適合，而是正在長出承載力。"],
+      ["frame-size","改變框架大小","Change Frame Size","調整時間、範圍或關係尺度來改變意義。","從三年後看，這件事代表什麼？","如果用三個月來看，這可能只是能力曲線中的一個點。"],
+      ["another-outcome","另一個結果","Another Outcome","從原本爭點轉向更值得追求的結果。","除了證明對錯，真正想要的結果是什麼？","比起證明不會失敗，更重要的是學會更快調整。"],
+      ["model-world","世界模型","Model of the World","看見這只是某種觀點，不是唯一現實。","誰會用不同方式看這件事？","在另一個重視學習的人眼中，這可能是蒐集經驗。"],
+      ["reality-strategy","現實策略","Reality Strategy","探索對方如何判定這句話是真的。","你怎麼知道這是真的？","你根據哪些畫面、聲音或感覺判定？有沒有被忽略的證據？"],
+      ["counterexample","反例","Counterexample","找到與限制信念不一致的例外。","有沒有一次並不是這樣？","只要有一次不是這樣，它就不是絕對真理，而是可更新假設。"],
+      ["criteria","價值層級","Hierarchy of Criteria","用更高價值重新排序當下判斷。","比避免出錯更重要的是什麼？","如果成長比完美重要，這件事就是累積影響力的入口。"],
+      ["apply-self","應用於自身","Apply to Self","把信念規則套回它自己，檢查是否自洽。","這個說法本身符合自己的規則嗎？","說不能改變本身就在改變狀態，代表語言確實有力量。"],
+      ["meta-frame","後設框架","Meta Frame","跳到更高層，看見信念如何被形成與維持。","這個判斷在什麼脈絡中被學會？","它曾經保護你，但現在可以檢查是否還適合新階段。"]
+    ].map(([id,name,english,summary,prompt,frame]) => ({id,name,english,summary,prompt,frame}));
+
+    const beliefs = [
+      "我不敢開口邀約，因為被拒絕會很丟臉。","我今天成交失敗，代表我不適合做銷售。","反正我學得比別人慢，現在開始也沒用了。","我總是沒有辦法把課程講清楚。","我現在處理瑣事，根本不像有影響力的講師。","我一緊張就代表我還沒準備好。","今天被主管提醒，我覺得自己很糟。","我一定要讓大家覺得我很專業。","提問太多會讓別人覺得我不懂。","我知道大家一定覺得我講得不好。","我從來不會有效安撫情緒激動的人。","如果不能一次做到最好，就不要開始。","人到這個年紀就很難改變了。","我不能太突出，否則會被討厭。","我不想做練習，因為這看起來很尷尬。","我很抗拒改變，所以不適合學 NLP。","我就是不擅長表達，沒必要再練了。","我就是一個沒有自信的人。","我今天只是練一句話，感覺沒什麼用。","我的腦袋常常卡住，想不到好的回應。","我只要犯錯，就會拖累整個團隊。","我是不是很有天分，決定我能不能成功。","嚴格要求自己才會進步。","我感覺客戶不信任我。","我面對高階主管一定會緊張到講不好。","我不能問太簡單的問題，會顯得我不夠厲害。","我越想改變，越證明我現在不夠好。","我必須討好大家，才不會被排斥。","我沒有資源，所以做不起來。","我怕自己無法真正幫到學員。"
+    ];
+    const beliefMaps = [
+      ["因果論", "被拒絕", "很丟臉", "把拒絕重新定義成邀約資料，而不是身份評價。"],
+      ["等同論", "成交失敗", "我不適合銷售", "拆開單次結果與能力身份，找出可修正環節。"],
+      ["因果論", "學得慢", "現在開始沒用", "改變時間框架，讓慢變成穩定累積。"],
+      ["等同論", "某次講不清楚", "我總是講不清楚", "向下拆解到開場、案例、流程或收尾。"],
+      ["等同論", "處理瑣事", "我沒有影響力", "向上連回講師系統能力與學員成效。"],
+      ["等同論", "緊張", "我沒準備好", "用類比把緊張改成能量集中。"],
+      ["等同論", "被主管提醒", "我很糟", "拉大時間尺度，看成校準節點。"],
+      ["因果論", "大家不覺得我專業", "我就失敗", "轉向真正成果：讓學員帶走可用方法。"],
+      ["因果論", "提問太多", "別人覺得我不懂", "換一個世界模型：提問代表品質責任。"],
+      ["等同論", "我感覺大家沉默", "大家覺得我不好", "做現實檢驗，把讀心改成蒐證。"],
+      ["等同論", "一次安撫失敗", "我從來不會安撫", "找反例並萃取可複製策略。"],
+      ["因果論", "不能一次最好", "不要開始", "用價值層級把成長放到完美之上。"],
+      ["因果論", "年紀到了", "很難改變", "反身自用：這句話本身正在改變狀態。"],
+      ["因果論", "太突出", "會被討厭", "後設框架：看見舊信念曾保護關係安全。"],
+      ["等同論", "練習很尷尬", "我不能做", "找出抗拒背後保護的安全感。"],
+      ["等同論", "我抗拒改變", "不適合 NLP", "重新定義為界線訊號，而非能力判決。"],
+      ["因果論", "不擅長表達", "沒必要再練", "比較兩種信念的未來後果。"],
+      ["等同論", "某些情境不穩", "我是沒自信的人", "拆成人格標籤下的具體行為。"],
+      ["等同論", "只練一句話", "沒什麼用", "向上連到換框能力與高階執行師身份。"],
+      ["等同論", "腦袋卡住", "想不到回應", "用隱喻改變內在路徑。"],
+      ["因果論", "犯錯", "拖累團隊", "改變關係框架：錯誤是系統學習資料。"],
+      ["因果論", "沒有天分", "不能成功", "換成可控結果：建立練習流程。"],
+      ["因果論", "不嚴格", "不會進步", "擴充世界模型：支持也能促進長期進步。"],
+      ["等同論", "感覺客戶不信任", "客戶真的不信任", "現實檢驗：用問題取得真實回饋。"],
+      ["因果論", "面對高階主管", "一定講不好", "找反例並複製穩定策略。"],
+      ["因果論", "問簡單問題", "我不夠厲害", "價值層級：影響力高於面子。"],
+      ["等同論", "想改變", "我現在不夠好", "反身自用：成長不等於否定自己。"],
+      ["因果論", "不討好", "會被排斥", "後設框架：讓舊策略退役。"],
+      ["因果論", "沒有資源", "做不起來", "連續使用向下拆解、反例與另一個結果。"],
+      ["等同論", "害怕幫不到學員", "我不夠好", "整合：責任感、正面動機與下一步行動。"]
+    ];
+    const titles = ["看見抱怨背後的正向意圖","把失敗改名為回饋","讓信念看見自己的代價","把巨大問題拆成下一步","回到更大的身份與使命","用類比讓大腦換路徑","用時間尺度鬆動困境","從證明自己轉向真正成果","看見這只是其中一種世界觀","檢查你如何判定它是真的","找到限制信念的例外","用更高價值重新排序","讓信念套用到自己身上","看見信念形成的脈絡","在抗拒中聽見保護","把抗拒改名為界線訊號","比較兩種信念的未來","把人格標籤拆成行為","從技巧回到身份升級","設計一個教學隱喻","用關係尺度換框","把焦點轉向可訓練能力","為學員擴充觀點地圖","把讀心改成蒐證","讓例外成為新策略","從面子轉向影響力","拆解自我否定的循環","辨識舊信念的時代任務","同一句話連續換 5 個框","設計你的教練式換框流程"];
+    const days = Array.from({length:30}, (_, i) => {
+      const mode = i < 28 ? modes[i % 14] : {id:"mixed", name:"整合", english:"Integration", frame:"先跟後導，承認痛苦，找正面動機，再導向下一步。"};
+      return {
+        d: i + 1,
+        mode: mode.id,
+        modeName: mode.name,
+        modeEnglish: mode.english,
+        title: titles[i],
+        belief: beliefs[i],
+        beliefType: beliefMaps[i][0],
+        a: beliefMaps[i][1],
+        b: beliefMaps[i][2],
+        lever: beliefMaps[i][3],
+        intro: i < 28 ? `今天練習「${mode.name}」模式，讓限制語言多一個出口。` : "今天進入整合練習，把多個模式串成教練式回應。",
+        steps: ["先判斷它是因果論，還是等同論。", "標出 A 與 B：對方把什麼事件和什麼結果綁在一起？", "找出痛苦背後正在保護的價值或正面動機。", "用今天模式拆開 A→B，最後收斂成一個下一步。"],
+        sample: i < 28 ? mode.frame : "你怕幫不到學員，代表你很重視責任。真正的幫助不一定是立刻給答案，而是帶對方多看見一個選擇，並願意做下一個小行動。"
+      };
+    });
+    const roles = [
+      {id:"a", title:"A 發難者｜立場堅定", text:"倒出負面情緒與抱怨，保持角色人設，直到 B 觸動正面動機才逐漸放軟。"},
+      {id:"b", title:"B 換框挑戰者｜NLP 執行師", text:"嚴禁回嘴或說教。依序完成傾聽同步、呼應同理、正面動機換框、導向行動。"},
+      {id:"c", title:"C 觀察記錄員｜客觀雷達", text:"保持安靜，觀察 B 的語調與同步程度，記錄關鍵換框金句出現時間。"}
+    ];
+    const scenarios = [
+      {id:"ops", title:"跨部門戰火｜行銷部 vs. 營運部", conflict:"促銷爆單造成物流加班、客訴增加，行銷主管抱怨營運拖累業績。", oldFrame:"行銷部只會畫大餅、亂搞活動，根本不管後端死活。", motive:"行銷端渴望開拓營收；營運端重視品質、流程尊嚴與可承載節奏。", reframe:"我理解物流端這週全體加班的辛苦。同時，這也證明你們頂住了過去三倍的運能極限。這次爆單是公司擴張前的壓力測試，讓我們看清流程瓶頸。"},
+      {id:"digital", title:"世代衝突｜資深老鳥 vs. 新科主管", conflict:"新主管要求每日更新雲端看板，資深業務認為是形式主義與不信任。", oldFrame:"每天填數位進度表，根本是浪費時間、對我不信任。", motive:"資深業務重視實戰經驗與自主；新主管希望掌握全局、提前避險。", reframe:"正因為您是隊上的王牌，這張表不是要綁住您，而是把您的成功心法數位化，未來能幫您更快帶新人。"},
+      {id:"lean", title:"資源限制｜新專案預算太少", conflict:"新專案限制多、預算少、時間緊，團隊擔心投入後失敗。", oldFrame:"這個新專案限制這麼多、預算這麼少，根本不可能成功。", motive:"團隊害怕失敗，希望安全穩健，也希望資源不要被浪費。", reframe:"確實預算吃緊。同時，資源有限也會逼我們專注在投報率最高的 20% 客群上，這是練習精準打擊的最好機會。"}
+    ];
+    const key = "reframe30Workshop.v3";
+    let state = JSON.parse(localStorage.getItem(key) || '{"entries":{},"completed":[]}');
+    let currentDay = Math.min(Math.max(state.currentDay || 1, 1), 30);
+    let currentMode = modes[0].id;
+    let currentScenario = scenarios[0].id;
+    let deferredPrompt = null;
+    const $ = (id) => document.getElementById(id);
+    const toast = (msg) => { const el = $("toast"); el.textContent = msg; el.classList.add("show"); clearTimeout(toast.t); toast.t = setTimeout(() => el.classList.remove("show"), 1800); };
+    const save = () => localStorage.setItem(key, JSON.stringify(state));
+    function renderProgress() {
+      const count = new Set(state.completed).size;
+      $("doneCount").textContent = count;
+      $("progressText").textContent = `${count} / 30`;
+      $("progressFill").style.width = `${count / 30 * 100}%`;
+      $("completeBtn").textContent = state.completed.includes(currentDay) ? "今日已完成" : "標記今日完成";
+    }
+    function renderPractice() {
+      const day = days[currentDay - 1];
+      const entry = state.entries[currentDay] || {};
+      $("daySelect").innerHTML = days.map(d => `<option value="${d.d}">Day ${d.d}｜${d.title}</option>`).join("");
+      $("daySelect").value = currentDay;
+      $("dayLabel").textContent = `Day ${day.d}｜${day.modeName} ${day.modeEnglish}`;
+      $("dayTitle").textContent = day.title;
+      $("dayIntro").textContent = day.intro;
+      $("belief").textContent = `練習句：${day.belief}`;
+      $("beliefType").innerHTML = `<strong>信念結構：</strong>${day.beliefType}｜A：${day.a} → B：${day.b}`;
+      $("patternPath").innerHTML = `<strong>今日施力點：</strong>${day.lever}`;
+      $("steps").innerHTML = day.steps.map((s, i) => `<div class="step"><span class="step-num">${i + 1}</span><p>${s}</p></div>`).join("");
+      $("sample").textContent = day.sample;
+      $("sample").classList.remove("show");
+      $("userBelief").value = entry.belief || "";
+      $("userReframe").value = entry.reframe || "";
+      $("userAction").value = entry.action || "";
+      $("prevDay").disabled = currentDay === 1;
+      $("nextDay").disabled = currentDay === 30;
+      state.currentDay = currentDay;
+      save();
+      renderProgress();
+    }
+    function renderModes() {
+      $("modeGrid").innerHTML = modes.map(m => `<button class="mode-card ${m.id === currentMode ? "active" : ""}" data-mode="${m.id}" type="button"><strong>${m.name}</strong><span>${m.english}<br>${m.summary}</span></button>`).join("");
+      const m = modes.find(x => x.id === currentMode) || modes[0];
+      $("modeDetail").innerHTML = `<span class="label">${m.english}</span><h2 class="day-title">${m.name}</h2><p class="lead">${m.summary}</p><div class="phrase"><strong>提問：</strong>${m.prompt}</div><div class="phrase"><strong>句型：</strong>${m.frame}</div>`;
+    }
+    function renderWorkshop() {
+      $("roleCards").innerHTML = roles.map(r => `<div class="role-card role-${r.id}"><strong>${r.title}</strong><p>${r.text}</p></div>`).join("");
+      $("scenarioSelect").innerHTML = scenarios.map(s => `<option value="${s.id}">${s.title}</option>`).join("");
+      $("scenarioSelect").value = currentScenario;
+      renderScenario();
+    }
+    function renderScenario() {
+      const s = scenarios.find(x => x.id === currentScenario) || scenarios[0];
+      $("scenarioDetail").innerHTML = `<h3>${s.title}</h3><p class="lead">${s.conflict}</p><div class="phrase"><strong>舊框架：</strong>${s.oldFrame}</div><div class="phrase"><strong>正面動機：</strong>${s.motive}</div><div class="phrase"><strong>換框金句：</strong>${s.reframe}</div>`;
+    }
+    function renderJournal() {
+      const entries = Object.entries(state.entries).filter(([,e]) => e.belief || e.reframe || e.action).sort((a,b) => Number(a[0]) - Number(b[0]));
+      $("journalList").innerHTML = entries.length ? entries.map(([d,e]) => `<article class="journal-item"><strong>Day ${d}｜${days[d-1].title}</strong><p>原句：${e.belief || "未填寫"}</p><p>換框：${e.reframe || "未填寫"}</p><p>行動：${e.action || "未填寫"}</p></article>`).join("") : `<p class="journal-empty">還沒有紀錄。完成每日練習後，這裡會累積成你的個人案例庫。</p>`;
+    }
+    function saveEntry() {
+      state.entries[currentDay] = { belief: $("userBelief").value.trim(), reframe: $("userReframe").value.trim(), action: $("userAction").value.trim(), updatedAt: new Date().toISOString() };
+      save();
+      renderJournal();
+      toast("已儲存");
+    }
+    document.querySelectorAll(".tab").forEach(tab => tab.addEventListener("click", () => {
+      document.querySelectorAll(".tab").forEach(t => t.classList.toggle("active", t === tab));
+      document.querySelectorAll(".view").forEach(v => v.classList.toggle("active", v.id === tab.dataset.view));
+      if (tab.dataset.view === "journal") renderJournal();
+    }));
+    $("daySelect").addEventListener("change", () => { currentDay = Number($("daySelect").value); renderPractice(); });
+    $("prevDay").addEventListener("click", () => { if (currentDay > 1) { currentDay--; renderPractice(); } });
+    $("nextDay").addEventListener("click", () => { if (currentDay < 30) { currentDay++; renderPractice(); } });
+    $("sampleBtn").addEventListener("click", () => $("sample").classList.toggle("show"));
+    $("saveBtn").addEventListener("click", saveEntry);
+    $("completeBtn").addEventListener("click", () => { saveEntry(); if (!state.completed.includes(currentDay)) state.completed.push(currentDay); state.completed.sort((a,b)=>a-b); save(); renderProgress(); toast(`Day ${currentDay} 已完成`); });
+    $("copyJournalBtn").addEventListener("click", () => navigator.clipboard.writeText(JSON.stringify(state.entries, null, 2)).then(() => toast("已複製紀錄")).catch(() => toast("此瀏覽器不支援自動複製")));
+    $("resetBtn").addEventListener("click", () => { if (confirm("確定清除本機紀錄？")) { state = {entries:{}, completed:[], currentDay:1}; currentDay = 1; save(); renderPractice(); renderJournal(); toast("已清除"); } });
+    $("modeGrid").addEventListener("click", e => { const card = e.target.closest("[data-mode]"); if (card) { currentMode = card.dataset.mode; renderModes(); } });
+    $("scenarioSelect").addEventListener("change", () => { currentScenario = $("scenarioSelect").value; renderScenario(); });
+    window.addEventListener("beforeinstallprompt", e => { e.preventDefault(); deferredPrompt = e; $("installBtn").hidden = false; });
+    $("installBtn").addEventListener("click", async () => { if (deferredPrompt) { deferredPrompt.prompt(); await deferredPrompt.userChoice; deferredPrompt = null; $("installBtn").hidden = true; } });
+    if ("serviceWorker" in navigator && location.protocol !== "file:") window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js").catch(() => {}));
+    renderPractice(); renderModes(); renderWorkshop(); renderJournal();
+  </script>
+</body>
+</html>

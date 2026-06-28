@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs><linearGradient id="bg" x1="84" x2="430" y1="50" y2="468"><stop stop-color="#e2f3e3"/><stop offset=".48" stop-color="#efd765"/><stop offset="1" stop-color="#ea927d"/></linearGradient><linearGradient id="brain" x1="130" x2="386" y1="116" y2="390"><stop stop-color="#77bf91"/><stop offset=".55" stop-color="#efd765"/><stop offset="1" stop-color="#ea927d"/></linearGradient></defs>
+  <rect width="512" height="512" rx="116" fill="url(#bg)"/>
+  <path fill="#fffdf4" opacity=".56" d="M42 370c62 41 144 58 232 42 89-16 157-62 196-119v158a61 61 0 0 1-61 61H103a61 61 0 0 1-61-61v-81Z"/>
+  <path fill="url(#brain)" d="M187 116c-48 0-86 37-86 83 0 16 4 31 12 44a99 99 0 0 0 52 184h178a91 91 0 0 0 39-174 82 82 0 0 0-126-101 82 82 0 0 0-69-36Z"/>
+  <path fill="none" stroke="#fffdf4" stroke-linecap="round" stroke-width="25" d="M183 200c34-25 63-9 75 22M134 281c42-16 71 3 87 36M282 195c41 0 64 27 62 63M279 340c43 17 79 4 98-30M224 252c23 34 66 35 91 7"/>
+</svg>

@@ -1,2 +1,24 @@
-# NLP-reframe-30-C
-30 天每日練習、14 種 Sleight of Mouth 模式、練習輸入、進度我是NLP高級執行師，我要更好的幫助學員能有效個運用NLP當中重要的技巧 : 換框。所以，需要你來設計一個30天換框每日手機練習APP， 內容請運用 Sleight of Mouth這本書中經典的 14 種「語言魔術」模式（回應模式）來設計30天的每日練習，精進換框的能力 !   這本書中將「換框」拆解成 14 個威力強大的操作槓桿，面對同一個負面抱怨，能有 14 種不同的拆解角度。所以，請你幫我設計一個 深入學習 reframing/ sleight of mouth 的手機APP讓我可以做30天的練習。請做成互動式PAW網頁
+# 30天換框練習 PWA
+
+這是一個可部署到 GitHub Pages 的手機版互動式 PWA，參考《Sleight of Mouth》的核心架構重新設計內容：
+
+- 先辨識限制性信念的兩種結構：因果論、等同論。
+- 再運用 14 種 Sleight of Mouth 語言魔術模式拆解 A→B 鏈條。
+- 每天練習一個信念句，標出 A、B、施力點、換框回應與下一步行動。
+- 內建課堂演練模式：角色卡、衝突情境庫、講師點評雷達。
+
+## 本機預覽
+
+```powershell
+node .\local-server.mjs
+```
+
+開啟 `http://localhost:4173/`。
+
+## GitHub Pages
+
+建議部署設定：
+
+```text
+Settings > Pages > Deploy from a branch > main > /docs
+```
